@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Nisbiylik Nazariyasi — Abduvayitov Jasurjon</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600;700;800&family=EB+Garamond:ital,wght@0,500;1,400&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0D1B2A;--dblue:#1B3A5C;--blue:#1565C0;--cyan:#00B4D8;
+  --gold:#F4C430;--white:#fff;--light:#E3F2FD;--gray:#90A4AE;
+  --dark:#07111B;--accent:#FF6B35;--green:#00C853;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--navy);
+  font-family:'Inter',sans-serif;color:var(--white)}
+
+/* ── Stars ── */
+.stars-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 20% 50%,rgba(21,101,192,.28) 0%,transparent 55%),
+    radial-gradient(ellipse at 80% 20%,rgba(0,180,216,.12) 0%,transparent 45%),
+    #0D1B2A;
+}
+.stars-bg::after{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.8) 0%,transparent 100%),
+    radial-gradient(1px 1px at 18% 55%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 32% 7%,rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 45% 38%,rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 75%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1.5px 1.5px at 73% 18%,rgba(255,255,255,.75) 0%,transparent 100%),
+    radial-gradient(1px 1px at 85% 60%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 94% 85%,rgba(255,255,255,.45) 0%,transparent 100%),
+    radial-gradient(1px 1px at 4% 82%,rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 52% 92%,rgba(255,255,255,.55) 0%,transparent 100%),
+    radial-gradient(1px 1px at 27% 78%,rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1.2px 1.2px at 67% 42%,rgba(255,255,255,.6) 0%,transparent 100%);
+  background-size:
+    320px 250px,200px 310px,450px 280px,380px 330px,290px 410px,
+    270px 220px,480px 370px,210px 290px,350px 320px,400px 260px,
+    230px 350px,340px 240px;
+}
+
+/* ── App shell ── */
+#app{position:relative;z-index:1;width:100vw;height:100vh;display:flex;flex-direction:column}
+
+/* ── Top bar ── */
+#topbar{
+  flex-shrink:0;height:52px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;background:rgba(13,27,42,.9);border-bottom:2px solid var(--cyan);
+  backdrop-filter:blur(10px);
+}
+.tb-logo{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;
+  color:var(--cyan);letter-spacing:2px;text-transform:uppercase}
+.tb-logo span{color:var(--gold)}
+.tb-info{display:flex;align-items:center;gap:16px}
+.tb-info span{font-size:11.5px;color:var(--gray)}
+.tb-slide-counter{
+  background:rgba(0,180,216,.15);border:1px solid var(--cyan);
+  border-radius:20px;padding:3px 14px;font-size:12px;font-weight:700;
+  color:var(--cyan);font-family:'Orbitron',sans-serif;letter-spacing:1px
+}
+
+/* ── Slides container ── */
+#slides{flex:1;position:relative;overflow:hidden}
+.slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity .38s cubic-bezier(.4,0,.2,1),transform .38s cubic-bezier(.4,0,.2,1);
+  transform:translateX(55px);
+}
+.slide.active{opacity:1;pointer-events:all;transform:translateX(0)}
+.slide.exit{opacity:0;transform:translateX(-55px)}
+
+/* dark/light base */
+.slide.dark{background:transparent}
+.slide.light{background:linear-gradient(135deg,#EEF5FF 0%,#F5F9FF 100%)}
+.slide.light::before{content:'';position:absolute;left:0;top:0;width:9px;height:100%;
+  background:var(--blue);z-index:1}
+.slide.light::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:5px;
+  background:var(--cyan);z-index:1}
+
+/* ── Slide header ── */
+.sh{
+  flex-shrink:0;display:flex;align-items:center;gap:14px;
+  padding:11px 24px 10px;
+  border-bottom:1px solid rgba(0,180,216,.2);
+  position:relative;z-index:2;
+}
+.sh-num{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;
+}
+.sh-num.cyan{background:var(--cyan);color:var(--navy)}
+.sh-num.gold{background:var(--gold);color:var(--navy)}
+.sh-num.blue{background:var(--blue);color:#fff}
+.sh-num.green{background:var(--green);color:var(--navy)}
+.sh-title{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:700;line-height:1.2}
+.slide.dark .sh-title{color:var(--white)}
+.slide.light .sh-title{color:var(--blue)}
+.sh-sub{font-size:11.5px;margin-top:2px}
+.slide.dark .sh-sub{color:var(--cyan)}
+.slide.light .sh-sub{color:var(--gray)}
+
+/* ── Slide body ── */
+.sb{flex:1;padding:14px 20px 10px;display:flex;flex-direction:column;gap:10px;
+  overflow:hidden;position:relative;z-index:2}
+.sb.row{flex-direction:row}
+
+/* ── Bottom bar ── */
+#botbar{
+  flex-shrink:0;height:50px;display:flex;align-items:center;justify-content:center;
+  gap:20px;background:rgba(13,27,42,.88);border-top:1px solid rgba(0,180,216,.18);
+  backdrop-filter:blur(10px);
+}
+.nbtn{
+  display:flex;align-items:center;gap:7px;background:var(--dblue);
+  border:1.5px solid var(--cyan);border-radius:6px;padding:7px 20px;
+  font-size:12.5px;font-weight:700;color:var(--cyan);cursor:pointer;
+  font-family:'Inter',sans-serif;
+  transition:background .18s,color .18s,transform .12s;
+}
+.nbtn:hover:not(:disabled){background:var(--cyan);color:var(--navy);transform:translateY(-1px)}
+.nbtn:disabled{opacity:.3;cursor:not-allowed}
+.dots{display:flex;gap:7px;align-items:center;flex-wrap:wrap;max-width:60vw;justify-content:center}
+.dot{width:9px;height:9px;border-radius:50%;background:rgba(0,180,216,.28);
+  cursor:pointer;transition:background .2s,transform .18s;flex-shrink:0}
+.dot.active{background:var(--cyan);transform:scale(1.4)}
+.dot.phet{background:rgba(244,196,48,.3)}
+.dot.phet.active{background:var(--gold)}
+
+/* ── Reusable components ── */
+.cyan-bar{height:4px;background:var(--cyan);border-radius:2px;width:100%;margin:2px 0 8px}
+.gold-bar{height:4px;background:var(--gold);border-radius:2px;width:100%;margin:2px 0 8px}
+
+.card{border-radius:6px;overflow:hidden}
+.card-head{padding:8px 14px;font-size:12.5px;font-weight:700}
+.card-body{padding:10px 14px;font-size:12px;line-height:1.65}
+
+.formula-box{
+  background:var(--navy);border:2px solid var(--gold);border-radius:6px;
+  padding:8px 16px;text-align:center;
+  font-family:'EB Garamond',serif;font-size:22px;font-weight:700;
+  color:var(--gold);letter-spacing:1px;
+}
+.formula-sm{font-size:16px}
+
+.tag{
+  display:inline-block;padding:3px 12px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:.5px;
+}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* ── Timeline ── */
+.timeline{display:flex;flex-direction:column;gap:0;padding-left:24px;position:relative}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:3px;background:var(--cyan)}
+.tl-item{position:relative;padding:4px 0 4px 28px;min-height:36px}
+.tl-dot{position:absolute;left:-16px;top:8px;width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--white);flex-shrink:0}
+
+/* ── 2-col layout ── */
+.col-left{flex:0 0 auto;width:255px;display:flex;flex-direction:column;gap:9px;overflow-y:auto}
+.col-right{flex:1;display:flex;flex-direction:column;gap:9px;overflow:hidden}
+
+/* ── Comparison table ── */
+.comp{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:6px;overflow:hidden;
+  border:1px solid rgba(0,180,216,.2)}
+.comp-head{padding:8px 14px;font-size:12px;font-weight:700;text-align:center}
+.comp-row{display:contents}
+.comp-cell{padding:7px 12px;font-size:11.5px;line-height:1.5;border-top:1px solid rgba(0,180,216,.1)}
+
+/* ── Postulat cards ── */
+.postulat{border-radius:6px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
+.post-num{width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900}
+.post-body{}
+.post-title{font-size:14px;font-weight:700;margin-bottom:5px}
+.post-text{font-size:12.5px;line-height:1.6}
+
+/* ── Bar visualization ── */
+.bar-vis{display:flex;flex-direction:column;gap:7px}
+.bv-row{display:flex;align-items:center;gap:10px}
+.bv-label{font-size:11px;width:120px;flex-shrink:0;color:var(--gray)}
+.bv-bar{height:28px;border-radius:3px;display:flex;align-items:center;
+  padding-left:10px;font-size:11px;font-weight:700;transition:width .3s}
+
+/* ── Stat callouts ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{border-radius:6px;padding:12px;text-align:center}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900}
+.stat-desc{font-size:11px;margin-top:5px;line-height:1.4}
+
+/* ── PhET slides ── */
+.phet-layout{flex:1;display:flex;gap:0;overflow:hidden}
+.phet-sidebar{
+  width:230px;flex-shrink:0;
+  background:rgba(27,58,92,.6);
+  border-right:1px solid rgba(0,180,216,.2);
+  display:flex;flex-direction:column;gap:12px;
+  padding:14px 14px;overflow-y:auto;
+}
+.phet-sidebar.gold-side{
+  background:rgba(60,30,0,.5);
+  border-right-color:rgba(244,196,48,.2);
+}
+.phet-sidebar.green-side{
+  background:rgba(0,40,15,.5);
+  border-right-color:rgba(0,200,83,.2);
+}
+.phet-frame{flex:1;position:relative;background:#000}
+.phet-frame iframe{width:100%;height:100%;border:none;display:block}
+.phet-loading{
+  position:absolute;inset:0;background:rgba(13,27,42,.95);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  transition:opacity .4s;z-index:5;
+}
+.phet-loading.gone{opacity:0;pointer-events:none}
+.phet-spinner{width:44px;height:44px;border:4px solid rgba(0,180,216,.15);
+  border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite}
+.phet-spinner.gold-spin{border-top-color:var(--gold);border-color:rgba(244,196,48,.15);border-top-color:var(--gold)}
+.phet-spinner.green-spin{border-top-color:var(--green);border-color:rgba(0,200,83,.15);border-top-color:var(--green)}
+.phet-loading p{font-size:13px;color:var(--gray)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.info-blk{
+  background:rgba(13,27,42,.55);border-left:3px solid var(--cyan);
+  border-radius:4px;padding:10px 12px;
+}
+.info-blk.gold-blk{border-left-color:var(--gold)}
+.info-blk.green-blk{border-left-color:var(--green)}
+.info-blk h4{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1px;color:var(--cyan);margin-bottom:6px}
+.info-blk.gold-blk h4{color:var(--gold)}
+.info-blk.green-blk h4{color:var(--green)}
+.info-blk p,.info-blk li{font-size:11.5px;line-height:1.55;color:rgba(255,255,255,.85)}
+.info-blk ul{list-style:none}
+.info-blk li::before{content:"▸ ";font-size:9px;color:var(--cyan)}
+.info-blk.gold-blk li::before{color:var(--gold)}
+.info-blk.green-blk li::before{color:var(--green)}
+.fpill{
+  display:inline-block;margin-top:5px;
+  background:rgba(244,196,48,.12);border:1px solid var(--gold);
+  border-radius:20px;padding:4px 14px;
+  font-size:15px;font-weight:700;color:var(--gold);
+  font-family:'EB Garamond',serif;
+}
+
+/* ── Xulosa ── */
+.xulosa-item{
+  display:flex;align-items:stretch;border-radius:4px;overflow:hidden;
+  background:var(--dblue);
+}
+.xi-num{
+  width:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;color:var(--navy);
+}
+.xi-text{padding:8px 12px;font-size:12px;line-height:1.55;color:var(--light)}
+
+/* ── Refs ── */
+.ref-box{background:rgba(13,27,42,.5);border:1px solid rgba(144,164,174,.25);
+  border-radius:6px;padding:10px 16px}
+.ref-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  color:var(--cyan);margin-bottom:8px}
+.ref-item{font-size:11px;color:var(--gray);line-height:1.7}
+
+/* ── Orbit/nucleus decorations ── */
+.orbit-demo{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+svg.demo-svg{width:100%;height:100%;max-height:100%}
+</style>
+</head>
+<body>
+<div class="stars-bg"></div>
+<div id="app">
+
+<!-- Top bar -->
+<div id="topbar">
+  <div class="tb-logo">Nisbiylik <span>Nazariyasi</span></div>
+  <div class="tb-info">
+    <span>Abduvayitov Jasurjon Izzatilla o'g'li</span>
+    <span>PHY II-85-25 · TDIU · 2026</span>
+    <div class="tb-slide-counter" id="counter">1 / 20</div>
+  </div>
+</div>
+
+<!-- Slides -->
+<div id="slides">
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 1 — Title -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark active" id="s0">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;
+    align-items:flex-start;padding:0 52px;position:relative;z-index:2;gap:0">
+
+    <!-- Decorative circle -->
+    <div style="position:absolute;right:60px;top:50%;transform:translateY(-50%);
+      width:260px;height:260px;border-radius:50%;
+      border:2px solid rgba(0,180,216,.3);
+      display:flex;align-items:center;justify-content:center">
+      <div style="width:200px;height:200px;border-radius:50%;
+        border:1.5px solid rgba(0,180,216,.2);
+        display:flex;align-items:center;justify-content:center">
+        <div style="font-size:64px">⚛️</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(21,101,192,.35);border:1px solid rgba(0,180,216,.4);
+      border-radius:4px;padding:5px 18px;font-size:10px;font-weight:700;
+      letter-spacing:2px;color:var(--light);text-transform:uppercase;margin-bottom:18px">
+      TOSHKENT DAVLAT IQTISODIYOT UNIVERSITETI · FIZIKA 2 · PHY II-85-25
+    </div>
+
+    <div style="font-family:'Orbitron',sans-serif;font-size:62px;font-weight:900;
+      color:var(--white);line-height:1;margin-bottom:6px">NISBIYLIK</div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:62px;font-weight:900;
+      color:var(--cyan);line-height:1;margin-bottom:14px">NAZARIYASI</div>
+    <div style="font-family:'EB Garamond',serif;font-size:24px;font-style:italic;
+      color:var(--gold);margin-bottom:28px">ni  o'rganish</div>
+
+    <div style="width:320px;height:3px;background:var(--cyan);border-radius:2px;margin-bottom:20px"></div>
+
+    <div style="font-size:13px;color:var(--gray);margin-bottom:8px">
+      Albert Eynshteyn · Maxsus va Umumiy nisbiylik · E = mc²
+    </div>
+    <div style="font-size:15px;font-weight:700;color:var(--white);margin-bottom:4px">
+      Bajardi: Abduvayitov Jasurjon Izzatilla o'g'li
+    </div>
+    <div style="font-size:12.5px;color:var(--gray)">Guruh: PHY II-85-25 · Toshkent, 2026</div>
+  </div>
+
+  <div style="position:absolute;right:52px;bottom:40px;z-index:2;
+    background:rgba(13,27,42,.7);border:2px solid var(--gold);
+    border-radius:8px;padding:14px 24px;text-align:center">
+    <div style="font-family:'EB Garamond',serif;font-size:36px;font-weight:700;color:var(--gold)">E = mc²</div>
+    <div style="font-size:11px;color:var(--cyan);margin-top:4px">Energiya ≡ Massa</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 2 — Mundarija -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s1">
+  <div style="flex:1;display:flex;flex-direction:column;padding:16px 24px 10px;gap:8px;position:relative;z-index:2">
+    <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--white)">MUNDARIJA</div>
+    <div class="cyan-bar"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 24px;flex:1">
+      <script>
+        const toc=[
+          ["01","Kirish — Nisbiylik nima?","c"],
+          ["02","Tarix — Albert Eynshteyn","g"],
+          ["03","Klassik mexanika chegaralari","c"],
+          ["04","Maxsus nisbiylik: 2 postulat","g"],
+          ["05","Vaqt kengayishi (Time Dilation)","c"],
+          ["06","Uzunlik qisqarishi","g"],
+          ["07","E = mc² — Massa va energiya","c"],
+          ["08","Lorentz transformatsiyalari","g"],
+          ["09","Umumiy nisbiylik (1915)","c"],
+          ["10","Qora tuynuklar","g"],
+          ["11","Amaliy qo'llanish: GPS, PET, yadro","c"],
+          ["12","Tajribalar va isbotlar","g"],
+          ["13","Relativistik massa va tezlik","c"],
+          ["14","Dolzarbligi va kelajagi","g"],
+          ["15","⚡ PhET SIM 1: Gravitatsiya","phet"],
+          ["16","⚡ PhET SIM 2: Yadroviy Parchalanish","phet"],
+          ["17","⚡ PhET SIM 3: Quyosh Tizimi","phet"],
+          ["18","Xulosa","c"],
+          ["19","Adabiyotlar","g"],
+        ];
+        document.write(toc.map(([n,t,c])=>{
+          const col=c==='phet'?'#F4C430':c==='g'?'#F4C430':'#00B4D8';
+          const bg=c==='phet'?'rgba(244,196,48,.15)':'rgba(13,27,42,.4)';
+          return `<div style="display:flex;align-items:center;gap:9px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+            <span style="width:26px;height:26px;border-radius:4px;background:${col};color:#0D1B2A;
+              font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;
+              flex-shrink:0;font-family:'Orbitron',sans-serif">${n}</span>
+            <span style="font-size:12px;color:rgba(255,255,255,.85)">${t}</span>
+          </div>`;
+        }).join(''));
+      </script>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 3 — Kirish -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide light" id="s2">
+  <div class="sh">
+    <div class="sh-num cyan">01</div>
+    <div><div class="sh-title">KIRISH — NISBIYLIK NIMA?</div>
+    <div class="sh-sub">Asosiy tushuncha va motivatsiya</div></div>
+  </div>
+  <div class="sb">
+    <div class="cyan-bar"></div>
+    <div style="background:var(--dblue);border-left:4px solid var(--cyan);
+      border-radius:4px;padding:10px 18px;font-size:14px;font-style:italic;
+      color:var(--gold);text-align:center">
+      "Hamma narsa nisbiy — faqat yorug'lik tezligi mutlaq." — Albert Eynshteyn
+    </div>
+    <div class="row3" style="flex:1">
+      <div class="card" style="background:#fff;border:1.5px solid #D0E4F7;box-shadow:0 3px 12px rgba(0,0,0,.08)">
+        <div class="card-head" style="background:var(--blue);color:#fff">🌍 Kundalik hayot</div>
+        <div class="card-body" style="color:#263238">
+          Poyezd harakatlanadi — ichkaridagi odam uchun devor tik turadi.<br><br>
+          Tashqaridagi kuzatuvchi uchun poyezd bilan birga harakat qiladi.<br><br>
+          <strong>Kim to'g'ri? — Ikkalasi ham!</strong>
+        </div>
+      </div>
+      <div class="card" style="background:#fff;border:1.5px solid #C8E6C9;box-shadow:0 3px 12px rgba(0,0,0,.08)">
+        <div class="card-head" style="background:#2E7D32;color:#fff">⚡ Fizikadagi ma'no</div>
+        <div class="card-body" style="color:#263238">
+          Vaqt, masofa va massa — <strong>tinch</strong> turgan kuzatuvchiga va
+          <strong>harakatdagi</strong> kuzatuvchiga farq qiladi.<br><br>
+          Bu paradoks emas — tajribada tasdiqlangan haqiqat!
+        </div>
+      </div>
+      <div class="card" style="background:#fff;border:1.5px solid #FFCC80;box-shadow:0 3px 12px rgba(0,0,0,.08)">
+        <div class="card-head" style="background:#E65100;color:#fff">⚛️ Ikki asosiy qism</div>
+        <div class="card-body" style="color:#263238">
+          <strong>① Maxsus nisbiylik (1905)</strong><br>
+          Tekis harakatdagi sistemalar uchun<br><br>
+          <strong>② Umumiy nisbiylik (1915)</strong><br>
+          Tortishish va egri fazovaqt uchun
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 4 — Eynshteyn tarixi -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s3">
+  <div class="sh">
+    <div class="sh-num gold">02</div>
+    <div><div class="sh-title">ALBERT EYNSHTEYN (1879–1955)</div>
+    <div class="sh-sub">Hayot yo'li va ilmiy merosı</div></div>
+  </div>
+  <div class="sb">
+    <div class="gold-bar"></div>
+    <div class="timeline" style="flex:1;gap:6px">
+      <script>
+        const tl=[
+          ["1879","Ulm, Germaniyada tug'ildi","cyan",false],
+          ["1905","«Mo'jizalar yili» — maxsus nisbiylik, fotoeffekt, Brown harakati (3 ta inqilobiy maqola)","gold",true],
+          ["1915","Umumiy nisbiylik nazariyasini yakunladi","gold",true],
+          ["1919","Eddington tutilishi uning nazariyasini isbotladi — butun dunyo tanidi","cyan",false],
+          ["1921","Fotoeffekt uchun Fizika bo'yicha Nobel mukofoti","cyan",false],
+          ["1933","Natsizm tufayli AQShga ko'chdi — Prinstonda ishladi","gray",false],
+          ["1955","Prinstonda vafot etdi. Mirosi — zamonaviy fizikaning asosi","gray",false],
+        ];
+        document.write(tl.map(([yr,ev,c,hot])=>{
+          const col=c==='gold'?'var(--gold)':c==='cyan'?'var(--cyan)':'var(--gray)';
+          return `<div class="tl-item">
+            <div class="tl-dot" style="background:${col};border-color:${hot?'var(--gold)':'rgba(255,255,255,.4)'}"></div>
+            <div style="display:flex;gap:14px;align-items:flex-start">
+              <span style="font-weight:800;font-size:13px;color:var(--gold);min-width:42px;flex-shrink:0">${yr}</span>
+              <span style="font-size:13px;color:${hot?'var(--white)':'rgba(255,255,255,.78)'};
+                ${hot?'font-weight:600':''}">${ev}</span>
+            </div>
+          </div>`;
+        }).join(''));
+      </script>
+    </div>
+    <div style="background:rgba(13,27,42,.5);border:1px solid rgba(244,196,48,.3);
+      border-radius:6px;padding:10px 18px;text-align:center;
+      font-style:italic;font-size:13px;color:var(--gold)">
+      "Xudoning sirini bilishni xohlayman — qolganlari tafsilot xolos." — A. Eynshteyn
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 5 — Klassik mexanika chegaralari -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide light" id="s4">
+  <div class="sh">
+    <div class="sh-num cyan">03</div>
+    <div><div class="sh-title">KLASSIK MEXANIKA VA UNING CHEGARALARI</div>
+    <div class="sh-sub">Nyuton mexanikasi qachon buziladi?</div></div>
+  </div>
+  <div class="sb" style="flex-direction:row;gap:12px">
+    <div style="flex:1;background:#E3F2FD;border:2px solid var(--blue);border-radius:8px;overflow:hidden">
+      <div style="background:var(--blue);padding:9px 16px;font-size:13px;font-weight:700;color:#fff;text-align:center">
+        ⚙  NYUTON MEXANIKASI
+      </div>
+      <div style="padding:12px 16px;display:flex;flex-direction:column;gap:7px">
+        <script>
+          const nt=[
+            ["Vaqt — mutlaq va universal","#263238",false],
+            ["Masofa — barcha uchun bir xil","#263238",false],
+            ["Massa — o'zgarmas","#263238",false],
+            ["Tezliklar qo'shilishi: v = v₁ + v₂","#263238",true],
+            ["✓ Sekin harakatda ishlaydi","#2E7D32",false],
+            ["✗ Yorug'lik tezligida BUZILADI!","#C62828",false],
+          ];
+          document.write(nt.map(([t,c,f])=>`<div style="font-size:12.5px;color:${c};
+            ${f?`background:rgba(21,101,192,.08);border-radius:4px;padding:4px 8px;
+            font-family:'EB Garamond',serif;font-size:14px`:''}">${t}</div>`).join(''));
+        </script>
+      </div>
+    </div>
+    <div style="flex:1;background:#FFF8E1;border:2px solid #C8960C;border-radius:8px;overflow:hidden">
+      <div style="background:#C8960C;padding:9px 16px;font-size:13px;font-weight:700;color:#fff;text-align:center">
+        ⚡  EYNSHTEYN NISBIYLIK
+      </div>
+      <div style="padding:12px 16px;display:flex;flex-direction:column;gap:7px">
+        <script>
+          const et=[
+            ["Vaqt — nisbiy (γ bilan o'lchanadi)","#4A3000",false],
+            ["Masofa — nisbiy (γ ga bo'linadi)","#4A3000",false],
+            ["Massa — tezlik bilan ortadi","#4A3000",false],
+            ["u = (v₁+v₂) / (1 + v₁v₂/c²)","#4A3000",true],
+            ["✓ Har qanday tezlikda to'g'ri","#1B5E20",false],
+            ["✓ c = 3×10⁸ m/s — har doim birxil","#1B5E20",false],
+          ];
+          document.write(et.map(([t,c,f])=>`<div style="font-size:12.5px;color:${c};
+            ${f?`background:rgba(200,150,12,.1);border-radius:4px;padding:4px 8px;
+            font-family:'EB Garamond',serif;font-size:14px`:''}">${t}</div>`).join(''));
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 6 — 2 ta postulat -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s5">
+  <div class="sh">
+    <div class="sh-num cyan">04</div>
+    <div><div class="sh-title">MAXSUS NISBIYLIK — 2 TA POSTULAT (1905)</div>
+    <div class="sh-sub">Eynshteyn ikkita oddiy, ammo inqilobiy postulatdan butun nazariyani qurdi</div></div>
+  </div>
+  <div class="sb" style="gap:14px">
+    <div class="cyan-bar"></div>
+    <div class="postulat" style="background:var(--dblue);border:2px solid var(--cyan);border-radius:8px;flex:1">
+      <div class="post-num" style="background:var(--cyan);color:var(--navy)">I</div>
+      <div class="post-body">
+        <div class="post-title" style="color:var(--cyan)">NISBIYLIK PRINTSIPI</div>
+        <div class="post-text" style="color:var(--light)">
+          Barcha <strong>inertsial</strong> (tekis harakatdagi) sistemalarda fizika qonunlari bir xil
+          ko'rinishda bo'ladi.<br><br>
+          Hech qanday tajriba bilan «mutlaq tinchlikda turish»ni aniqlash <strong>MUMKIN EMAS</strong>.
+        </div>
+      </div>
+    </div>
+    <div class="postulat" style="background:var(--dblue);border:2px solid var(--gold);border-radius:8px;flex:1">
+      <div class="post-num" style="background:var(--gold);color:var(--navy)">II</div>
+      <div class="post-body">
+        <div class="post-title" style="color:var(--gold)">YORUG'LIK TEZLIGI PRINTSIPI</div>
+        <div class="post-text" style="color:var(--light)">
+          Yorug'likning vakuumdagi tezligi  <strong style="color:var(--gold)">c ≈ 3 × 10⁸ m/s</strong>
+          barcha inertsial sistemalarda mutlaq bir xil.<br><br>
+          Manba yoki kuzatuvchi tezligidan qat'i nazar — <strong>c doim bir xil!</strong>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(0,200,83,.08);border:1px solid var(--green);
+      border-radius:6px;padding:10px 18px;font-size:13px;color:var(--green);text-align:center">
+      Bu ikkita postulat bir-biriga ZIDDEKk ko'rinadi — aynan shu ziddiyat nisbiylikni tug'dirdi!
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 7 — Vaqt kengayishi -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide light" id="s6">
+  <div class="sh">
+    <div class="sh-num cyan">05</div>
+    <div><div class="sh-title">VAQT KENGAYISHI — Time Dilation</div>
+    <div class="sh-sub">Tez harakatlanayotgan ob'ekt uchun vaqt sekinroq o'tadi</div></div>
+  </div>
+  <div class="sb">
+    <div class="cyan-bar"></div>
+    <div style="display:flex;gap:12px;flex:1">
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--navy);border:2px solid var(--cyan);border-radius:8px;padding:14px 18px">
+          <div style="font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">FORMULA</div>
+          <div style="font-family:'EB Garamond',serif;font-size:26px;font-weight:700;color:var(--gold);text-align:center">
+            Δt = Δt₀ / √(1 − v²/c²)
+          </div>
+        </div>
+        <div style="background:#fff;border:1.5px solid #D0E4F7;border-radius:6px;overflow:hidden;flex:1">
+          <div style="background:var(--blue);padding:7px 14px;font-size:12px;font-weight:700;color:#fff">O'zgaruvchilar</div>
+          <table style="width:100%;border-collapse:collapse">
+            <script>
+              [["Δt₀","Tinch holatdagi soatning vaqti (to'g'ri vaqt)"],
+               ["Δt", "Harakatdagi soatning vaqti — kengaygan"],
+               ["v",  "Ob'ekt tezligi (m/s)"],
+               ["c",  "Yorug'lik tezligi = 3×10⁸ m/s"],
+               ["γ",  "Lorentz faktori = 1/√(1−v²/c²) ≥ 1"]
+              ].forEach(([s,d])=>document.write(`<tr style="border-bottom:1px solid #eee">
+                <td style="padding:6px 12px;font-weight:800;color:var(--blue);font-family:'EB Garamond',serif;font-size:15px;width:40px">${s}</td>
+                <td style="padding:6px 12px;font-size:12px;color:#263238">${d}</td>
+              </tr>`));
+            </script>
+          </table>
+        </div>
+      </div>
+      <div style="flex:1.2;background:#E8F5E9;border:2px solid #2E7D32;border-radius:8px;overflow:hidden">
+        <div style="background:#2E7D32;padding:9px 16px;font-size:13px;font-weight:700;color:#fff;text-align:center">
+          🚀 AMALIY MISOL — Astronavt Paradoksi
+        </div>
+        <div style="padding:16px;font-size:13px;color:#1B5E20;line-height:1.8">
+          Astronavt <strong>v = 0.9c</strong> tezlikda <strong>10 yil</strong> uchadi (o'z soati bo'yicha).<br><br>
+          γ = 1 / √(1 − 0.81) = 1 / √0.19 ≈ <strong>2.29</strong><br><br>
+          Yerda o'tgan vaqt: Δt = 10 × 2.29 ≈ <strong>22.9 YIL</strong><br><br>
+          Astronavt qaytganda Yerdagilar <strong>12.9 yilga kattaroq!</strong><br><br>
+          <div style="background:rgba(46,125,50,.15);border-radius:4px;padding:8px 12px;font-size:12px">
+            Bu tajribada isbotlangan: GPS satellit soatlari ham
+            nisbiylik tufayli tuzatiladi!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 8 — Uzunlik qisqarishi -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s7">
+  <div class="sh">
+    <div class="sh-num gold">06</div>
+    <div><div class="sh-title">UZUNLIK QISQARISHI — Length Contraction</div>
+    <div class="sh-sub">Harakatlanayotgan ob'ekt harakat yo'nalishida qisqarib ko'rinadi</div></div>
+  </div>
+  <div class="sb">
+    <div class="gold-bar"></div>
+    <div style="display:flex;gap:12px;flex:1">
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--dblue);border:2px solid var(--gold);border-radius:8px;padding:14px 18px">
+          <div style="font-family:'EB Garamond',serif;font-size:24px;font-weight:700;color:var(--gold);text-align:center">
+            L = L₀ × √(1 − v²/c²) = L₀ / γ
+          </div>
+        </div>
+        <div style="background:var(--dblue);border:1px solid rgba(0,180,216,.3);border-radius:6px;padding:12px 16px">
+          <div style="font-size:11px;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:8px">O'zgaruvchilar</div>
+          <script>
+            [["L₀","To'g'ri uzunlik (tinch holat)"],
+             ["L", "Harakatdagi ob'ektning uzunligi (L < L₀)"],
+             ["γ", "Lorentz faktori ≥ 1  →  L = L₀/γ"]
+            ].forEach(([s,d])=>document.write(`<div style="display:flex;gap:10px;margin-bottom:7px;align-items:center">
+              <span style="background:rgba(244,196,48,.2);border:1px solid var(--gold);
+                border-radius:4px;padding:2px 10px;font-size:14px;font-weight:700;
+                color:var(--gold);font-family:'EB Garamond',serif;min-width:36px;text-align:center">${s}</span>
+              <span style="font-size:12.5px;color:var(--light)">${d}</span>
+            </div>`));
+          </script>
+        </div>
+      </div>
+      <div style="flex:1.2;display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:13px;font-weight:700;color:var(--cyan)">Ko'rgazmali misol (← harakat yo'nalishi)</div>
+        <div class="bar-vis" style="flex:1;justify-content:center">
+          <script>
+            [
+              ["Tinch (v = 0): L₀ = 100%", 100, "var(--blue)", "var(--white)"],
+              ["v = 0.6c:  γ=1.25  →  L = 80%", 80, "#1976D2", "var(--white)"],
+              ["v = 0.8c:  γ=1.67  →  L = 60%", 60, "var(--accent)", "var(--white)"],
+              ["v = 0.9c:  γ=2.29  →  L = 44%", 44, "#C62828", "var(--white)"],
+              ["v = 0.98c: γ=5.03  →  L = 20%", 20, "var(--gold)", "var(--navy)"],
+            ].forEach(([l,w,bg,tc])=>document.write(`
+              <div class="bv-row">
+                <div class="bv-label">${l.split(':')[0]}:</div>
+                <div class="bv-bar" style="width:${w}%;background:${bg};color:${tc}">${l.split('→')[1]||''}</div>
+              </div>`));
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 9 — E = mc² -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s8">
+  <div class="sh">
+    <div class="sh-num gold">07</div>
+    <div><div class="sh-title">E = mc² — MASSA VA ENERGIYA BIRLIGI</div>
+    <div class="sh-sub">Tarihdagi eng mashhur formula</div></div>
+  </div>
+  <div class="sb" style="gap:12px">
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-family:'EB Garamond',serif;font-size:72px;font-weight:700;
+        color:var(--gold);line-height:1;text-shadow:0 0 40px rgba(244,196,48,.3)">E = mc²</div>
+    </div>
+    <div class="row3">
+      <script>
+        [
+          ["E","Energiya","Joule (J)","var(--cyan)"],
+          ["m","Massa","kilogram (kg)","var(--green)"],
+          ["c²","(3×10⁸)²","= 9×10¹⁶ m²/s²","var(--accent)"],
+        ].forEach(([s,n,u,c])=>document.write(`
+          <div style="background:var(--dblue);border:2px solid ${c};border-radius:8px;
+            text-align:center;padding:12px;display:flex;flex-direction:column;gap:4px">
+            <div style="font-family:'EB Garamond',serif;font-size:36px;font-weight:700;color:${c}">${s}</div>
+            <div style="font-size:13px;font-weight:700;color:var(--white)">${n}</div>
+            <div style="font-size:11.5px;color:var(--gray)">${u}</div>
+          </div>`));
+      </script>
+    </div>
+    <div style="background:rgba(27,58,92,.6);border:1px solid var(--cyan);border-radius:8px;padding:12px 18px">
+      <div style="font-size:13px;font-weight:700;color:var(--cyan);margin-bottom:8px">Bu nima degani?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <script>
+          [
+            ["💣","1 gramm moddada","9×10¹³ J energiya — 20 kilotonnalik atom bombasiga teng!"],
+            ["☀️","Quyosh har soniyada","4 million tonna massani energiyaga aylantiradi"],
+            ["⚛️","Yadro reaktorlari","Dunyo elektr energiyasining ~10% shu formulaga asoslanadi"],
+          ].forEach(([ic,t,d])=>document.write(`
+            <div style="background:rgba(13,27,42,.5);border-radius:6px;padding:10px;text-align:center">
+              <div style="font-size:22px;margin-bottom:6px">${ic}</div>
+              <div style="font-size:11.5px;font-weight:700;color:var(--gold);margin-bottom:4px">${t}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.75);line-height:1.5">${d}</div>
+            </div>`));
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 10 — Lorentz transformatsiyalari -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide light" id="s9">
+  <div class="sh">
+    <div class="sh-num cyan">08</div>
+    <div><div class="sh-title">LORENTZ TRANSFORMATSIYALARI</div>
+    <div class="sh-sub">S sistema S' sistemaga nisbatan v tezlikda harakatlanadi</div></div>
+  </div>
+  <div class="sb" style="flex-direction:row;gap:12px">
+    <div style="flex:1;background:var(--navy);border:2px solid var(--cyan);border-radius:8px;overflow:hidden">
+      <div style="background:var(--blue);padding:9px 16px;font-size:13px;font-weight:700;color:#fff;text-align:center">
+        S → S' Formulalar
+      </div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+        <script>
+          [["x'","= γ(x − vt)"],["y'","= y"],["z'","= z"],
+           ["t'","= γ(t − vx/c²)"],["γ","= 1 / √(1 − v²/c²)"]
+          ].forEach(([l,r])=>document.write(`
+            <div style="display:flex;align-items:center;gap:16px;
+              background:rgba(0,180,216,.06);border-radius:4px;padding:8px 14px">
+              <span style="font-family:'EB Garamond',serif;font-size:22px;font-weight:700;
+                color:var(--gold);min-width:28px">${l}</span>
+              <span style="font-family:'EB Garamond',serif;font-size:20px;
+                color:var(--white)">${r}</span>
+            </div>`));
+        </script>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--navy);border:2px solid rgba(144,164,174,.3);border-radius:8px;overflow:hidden;flex:1">
+        <div style="background:#37474F;padding:9px 16px;font-size:13px;font-weight:700;color:#fff;text-align:center">
+          Chegaraviy hollar
+        </div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:10px">
+          <script>
+            [["v → 0","γ → 1 → Nyuton formulalariga aylanadi",true],
+             ["v → c","γ → ∞ → Vaqt to'xtab, uzunlik nolga tushadi",true],
+             ["v > c","γ — haqiqiy son emas → MUMKIN EMAS!",false],
+            ].forEach(([c,r,ok])=>document.write(`
+              <div style="background:${ok?'rgba(46,125,50,.12)':'rgba(198,40,40,.12)'};
+                border:1px solid ${ok?'#2E7D32':'#C62828'};border-radius:6px;padding:10px 14px">
+                <div style="font-size:13px;font-weight:800;color:${ok?'#1B5E20':'#C62828'};
+                  margin-bottom:4px">${c}</div>
+                <div style="font-size:12px;color:#263238">${r}</div>
+              </div>`));
+          </script>
+        </div>
+      </div>
+      <div style="background:rgba(21,101,192,.15);border:1px solid var(--blue);
+        border-radius:6px;padding:10px 14px;font-size:12px;color:#37474F">
+        <strong>Teskari Lorentz:</strong> x = γ(x'+vt'), t = γ(t'+vx'/c²) — Simmetrik!
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 11 — Umumiy nisbiylik -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s10">
+  <div class="sh">
+    <div class="sh-num cyan">09</div>
+    <div><div class="sh-title">UMUMIY NISBIYLIK NAZARIYASI (GR, 1915)</div>
+    <div class="sh-sub">Tortishish — kuch emas, fazovaqt egriligi</div></div>
+  </div>
+  <div class="sb" style="gap:10px">
+    <div style="background:var(--dblue);border:1px solid var(--cyan);border-radius:6px;
+      padding:10px 18px;text-align:center;font-size:15px;font-weight:700;color:var(--gold)">
+      ASOSIY G'OYA: Tortishish — bu KUCH emas. Bu FAZOVAQT EGRILIGIdagi harakatdir!
+    </div>
+    <div class="row3" style="flex:1">
+      <script>
+        [
+          ["🌐","Fazovaqt (Spacetime)","3D fazo + 1D vaqt → 4D fazovaqt. Katta massalar uni «egtiradi». Ob'ektlar egri fazovaqtda to'g'ri yo'l bo'ylab harakat qiladi.","var(--cyan)"],
+          ["⏰","Gravitatsion vaqt egriligi","Kuchli tortishish maydonida vaqt sekinroq o'tadi. Yer yuzasidagi soat kosmosga nisbatan sekinroq ishlaydi — GPS buni hisobga oladi.","var(--gold)"],
+          ["💡","Yorug'lik egriligi","1919 yil — Eddington tutilishida yulduzlar siljishi o'lchangan. Katta massa yorug'likni ham buradi!","var(--green)"],
+        ].forEach(([ic,t,d,c])=>document.write(`
+          <div style="background:var(--dblue);border:2px solid ${c};border-radius:8px;overflow:hidden">
+            <div style="border-bottom:3px solid ${c};padding:10px 14px;
+              display:flex;align-items:center;gap:10px">
+              <span style="font-size:22px">${ic}</span>
+              <span style="font-size:13px;font-weight:700;color:${c}">${t}</span>
+            </div>
+            <div style="padding:12px 14px;font-size:12.5px;color:var(--light);line-height:1.65">${d}</div>
+          </div>`));
+      </script>
+    </div>
+    <div style="text-align:center">
+      <div style="display:inline-block;background:rgba(13,27,42,.5);border:1px solid var(--gold);
+        border-radius:6px;padding:8px 24px;font-family:'EB Garamond',serif;
+        font-size:16px;color:var(--gold)">
+        G<sub>μν</sub> + Λg<sub>μν</sub> = (8πG/c⁴) T<sub>μν</sub>
+      </div>
+      <div style="font-size:10.5px;color:var(--gray);margin-top:5px">Eynshteyn maydon tenglamasi — GR ning asosi</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 12 — Qora tuynuklar -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s11">
+  <div class="sh">
+    <div class="sh-num gold">10</div>
+    <div><div class="sh-title">QORA TUYNUKLAR</div>
+    <div class="sh-sub">Umumiy nisbiylikning eng dramatik bashorati</div></div>
+  </div>
+  <div class="sb" style="flex-direction:row;gap:14px">
+    <div style="flex:1.1;display:flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 300 300" width="220" height="220">
+        <defs>
+          <radialGradient id="bhg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#000000"/>
+            <stop offset="65%" stop-color="#000000"/>
+            <stop offset="80%" stop-color="#0a0520"/>
+            <stop offset="100%" stop-color="#1B3A5C" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="glw" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#00B4D8" stop-opacity="0"/>
+            <stop offset="70%" stop-color="#00B4D8" stop-opacity="0.05"/>
+            <stop offset="90%" stop-color="#00B4D8" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#00B4D8" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="150" cy="150" r="130" fill="url(#glw)"/>
+        <circle cx="150" cy="150" r="95" fill="url(#bhg)" stroke="#00B4D8" stroke-width="1.5"/>
+        <circle cx="150" cy="150" r="60" fill="#000"/>
+        <!-- accretion disk -->
+        <ellipse cx="150" cy="150" rx="115" ry="20" fill="none" stroke="#FF6B35" stroke-width="5" opacity="0.5"/>
+        <ellipse cx="150" cy="150" rx="115" ry="20" fill="none" stroke="#F4C430" stroke-width="2" opacity="0.4" transform="rotate(5,150,150)"/>
+        <text x="150" y="258" text-anchor="middle" fill="#90A4AE" font-size="10" font-family="Inter">Voqealar ufqi</text>
+        <line x1="90" y1="250" x2="120" y2="185" stroke="#90A4AE" stroke-width="0.8"/>
+      </svg>
+    </div>
+    <div style="flex:1.6;display:flex;flex-direction:column;gap:9px">
+      <script>
+        [
+          ["Schwarzschild radiusi","rₛ = 2GM/c²  — «Qaytish mumkin emas» chegarasi (voqealar ufqi)","var(--cyan)"],
+          ["Voqealar ufqi","Bu chegaradan keyin hech narsa — hatto yorug'lik ham — chiqib keta olmaydi","var(--gold)"],
+          ["Vaqt to'xtashi","Ufq yaqinida γ → ∞: tashqi kuzatuvchi uchun vaqt amalda to'xtaydi","var(--cyan)"],
+          ["Hawking nurlanishi","Kvant effektlari sababli qora tuynuk oz-oz «bug'lanadi» — S.Hawking (1974)","var(--gold)"],
+        ].forEach(([t,d,c])=>document.write(`
+          <div style="background:var(--dblue);border-left:4px solid ${c};border-radius:4px;padding:10px 14px">
+            <div style="font-size:13px;font-weight:700;color:${c};margin-bottom:4px">${t}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.8);line-height:1.55">${d}</div>
+          </div>`));
+      </script>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 13 — Amaliy qo'llanish -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide light" id="s12">
+  <div class="sh">
+    <div class="sh-num cyan">11</div>
+    <div><div class="sh-title">AMALIY QO'LLANISH</div>
+    <div class="sh-sub">GPS, PET skaneri, yadro reaktori, zarrachalar tezlatgichi</div></div>
+  </div>
+  <div class="sb">
+    <div class="cyan-bar"></div>
+    <div class="row2" style="flex:1">
+      <script>
+        [
+          ["🛰","GPS Navigatsiya","GPS satellit soatlari tezligi (v≈3.9 km/s) va gravitatsiya farqi tufayli kuniga ~38 mksoniya xato beradi. To'g'rilanmasa — GPS har kuni 10 km xato ko'rsatadi!","#1565C0","#E3F2FD"],
+          ["🏥","PET-Skaneri (Tibbiyot)","Pozitronlar c ga yaqin tezlikda harakatlanadi. Relativistik massasi oshadi. Bu effektni hisobga olmasdan PET skaneri ishlamaydi.","#2E7D32","#E8F5E9"],
+          ["⚡","Yadro Reaktori","E=mc²: uran parchalanishida massa kamayib ulkan energiya ajraladi. Dunyo elektr energiyasining ~10% yadroviy reaktorlarda.","#C62828","#FFEBEE"],
+          ["🔬","CERN LHC Tezlatgich","LHC da protonlar 0.9999c tezligiga erishadi. Relativistik massasi tinch holatiga nisbatan 7000 marta katta!","#E65100","#FFF3E0"],
+        ].forEach(([ic,t,d,c,bg])=>document.write(`
+          <div style="background:${bg};border:1.5px solid ${c};border-radius:8px;overflow:hidden">
+            <div style="background:${c};padding:8px 14px;display:flex;align-items:center;gap:10px">
+              <span style="font-size:20px">${ic}</span>
+              <span style="font-size:13px;font-weight:700;color:#fff">${t}</span>
+            </div>
+            <div style="padding:12px 14px;font-size:12.5px;color:#263238;line-height:1.6">${d}</div>
+          </div>`));
+      </script>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 14 — Tajribalar -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s13">
+  <div class="sh">
+    <div class="sh-num gold">12</div>
+    <div><div class="sh-title">NISBIYLIKNI TASDIQLOVCHI TAJRIBALAR</div>
+    <div class="sh-sub">100+ yil davomida barcha testlardan o'tdi</div></div>
+  </div>
+  <div class="sb">
+    <div class="gold-bar"></div>
+    <script>
+      [
+        ["1887","Michelson–Morley","Efir yo'qligini isbotladi. Yorug'lik tezligi yo'nalishdan bog'liq emas — nisbiylikning poydevori."],
+        ["1919","Eddington Tutilishi","Quyosh yaqinida yulduzlar siljishi o'lchanib, umumiy nisbiylik isbotlandi. Eynshteyn mashhurga aylandi."],
+        ["1971","Hafele–Keating","Samolyotdagi atomik soat yer soatidan farq qildi. Maxsus va umumiy nisbiylik ikkalasi isbotlandi."],
+        ["2002","CERN Muonlari","Tez muonlar 2 mks o'rniga 30 mks yashadi — vaqt kengayishi to'g'ridan-to'g'ri o'lchandi."],
+        ["2016","LIGO Gravitatsion to'lqin","Ikki qora tuynuq to'qnashuvi natijasida fazovaqt tebranishi qayd etildi — GR ning eng buyuk isboti!"],
+      ].forEach(([yr,n,r])=>document.write(`
+        <div style="display:flex;align-items:stretch;background:var(--dblue);
+          border-left:3px solid var(--green);border-radius:4px;overflow:hidden;margin-bottom:7px">
+          <div style="background:var(--navy);padding:8px 10px;font-weight:900;font-size:12px;
+            color:var(--cyan);font-family:'Orbitron',sans-serif;min-width:52px;
+            display:flex;align-items:center;justify-content:center">${yr}</div>
+          <div style="padding:8px 14px">
+            <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:3px">✓ ${n}</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.78);line-height:1.5">${r}</div>
+          </div>
+        </div>`));
+    </script>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 15 — Relativistik massa va tezlik -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide light" id="s14">
+  <div class="sh">
+    <div class="sh-num blue">13</div>
+    <div><div class="sh-title">RELATIVISTIK MASSA VA TEZLIKLAR QO'SHILISHI</div>
+    <div class="sh-sub">Yorug'lik tezligiga erishib bo'lmasligining sababi</div></div>
+  </div>
+  <div class="sb" style="flex-direction:row;gap:12px">
+    <div style="flex:1;background:var(--navy);border:2px solid var(--cyan);border-radius:8px;overflow:hidden">
+      <div style="background:var(--cyan);padding:9px;font-size:12.5px;font-weight:700;color:var(--navy);text-align:center">RELATIVISTIK MASSA</div>
+      <div style="padding:14px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:'EB Garamond',serif;font-size:20px;color:var(--gold);text-align:center;
+          background:rgba(244,196,48,.08);border-radius:4px;padding:8px">m = γ · m₀</div>
+        <script>
+          [["v = 0.5c","γ ≈ 1.15","m = 1.15 m₀"],
+           ["v = 0.8c","γ ≈ 1.67","m = 1.67 m₀"],
+           ["v = 0.9c","γ ≈ 2.29","m = 2.29 m₀"],
+           ["v = 0.99c","γ ≈ 7.09","m = 7.09 m₀"],
+           ["v → c","γ → ∞","m → ∞ ❌"],
+          ].forEach(([v,g,m])=>document.write(`
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;
+              background:rgba(0,180,216,.06);border-radius:4px;padding:6px 10px">
+              <span style="font-size:12px;color:var(--cyan);font-family:'EB Garamond',serif;font-size:14px">${v}</span>
+              <span style="font-size:12px;color:var(--gray)">${g}</span>
+              <span style="font-size:12px;color:var(--gold);font-weight:700">${m}</span>
+            </div>`));
+        </script>
+      </div>
+    </div>
+    <div style="flex:1.2;display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--navy);border:2px solid var(--gold);border-radius:8px;overflow:hidden">
+        <div style="background:var(--gold);padding:9px;font-size:12.5px;font-weight:700;color:var(--navy);text-align:center">TEZLIKLAR QO'SHILISHI</div>
+        <div style="padding:14px">
+          <div style="font-family:'EB Garamond',serif;font-size:19px;color:var(--gold);text-align:center;margin-bottom:12px">
+            u = (v₁ + v₂) / (1 + v₁v₂/c²)
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:6px;padding:12px;font-size:12.5px;color:var(--white);line-height:1.8">
+            <strong>Misol:</strong> v₁ = 0.6c, v₂ = 0.8c<br>
+            <span style="color:#C62828">Nyuton (xato!): u = 1.4c</span><br>
+            <span style="color:var(--green)">Lorentz: u = 1.4/1.48 ≈ <strong>0.946c</strong> ✓</span>
+          </div>
+        </div>
+      </div>
+      <div style="background:rgba(0,200,83,.08);border:1.5px solid var(--green);border-radius:8px;padding:14px;flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px">🔒 ASOSIY XULOSA</div>
+        <div style="font-size:13px;color:#263238;line-height:1.7">
+          Hech qanday moddiy ob'ekt yorug'lik tezligiga <strong>ERISHIB</strong> yoki uni <strong>OSHIB</strong> keta olmaydi.<br>
+          Chunki: tezlik c ga yaqinlashgan sari massa <strong>cheksizga intiladi</strong> — bu uchun cheksiz energiya kerak!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 16 — Dolzarbligi va kelajagi -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s15">
+  <div class="sh">
+    <div class="sh-num gold">14</div>
+    <div><div class="sh-title">DOLZARBLIGI VA KELAJAGI</div>
+    <div class="sh-sub">Nisbiylik nazariyasi zamonaviy texnologiyaning poydevori</div></div>
+  </div>
+  <div class="sb" style="gap:12px">
+    <div class="stat-grid">
+      <script>
+        [
+          ["~10 km","GPS nisbiylik hisoblanmasa kunlik xatosi","#1565C0"],
+          ["E=mc²","Butun yadroviy fizika asosi","#C8960C"],
+          ["100+ yil","Barcha tajrimalarda tasdiqlangan nazariya","#C62828"],
+          ["7000×","LHC da proton massasi ortishi","#E65100"],
+        ].forEach(([n,d,c])=>document.write(`
+          <div class="stat" style="background:var(--dblue);border:2px solid ${c}">
+            <div class="stat-num" style="color:${c}">${n}</div>
+            <div class="stat-desc" style="color:rgba(255,255,255,.8)">${d}</div>
+          </div>`));
+      </script>
+    </div>
+    <div style="flex:1;background:var(--dblue);border:1.5px solid var(--cyan);border-radius:8px;padding:14px 18px;display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:14px;font-weight:700;color:var(--cyan)">KELAJAKDAGI ISTIQBOLLAR</div>
+      <div class="row2">
+        <script>
+          [
+            ["🔭","Kvant gravitatsiyasi","GR + kvant mexanikasini birlashtirish — zamonaviy fizikaning eng katta yechilmagan muammosi"],
+            ["🌌","String nazariyasi","Qo'shimcha o'lchovlar — 10 yoki 11 dimensional koinot nazariyasi"],
+            ["🕳","Qora tuynuk ichidagi fizika","Axborot paradoksi, Hawking nurlanishi — hal etilmagan masalalar"],
+            ["🌊","Gravitatsion to'lqinlar","LIGO va Virgo observatoriyalari yangi kashfiyotlar arafasida"],
+          ].forEach(([ic,t,d])=>document.write(`
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <span style="font-size:20px;flex-shrink:0">${ic}</span>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:3px">${t}</div>
+                <div style="font-size:12px;color:rgba(255,255,255,.75);line-height:1.5">${d}</div>
+              </div>
+            </div>`));
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 17 — PhET SIM 1: Gravity & Orbits -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s16">
+  <div class="sh" style="border-bottom-color:rgba(0,180,216,.35)">
+    <div class="sh-num cyan">S1</div>
+    <div>
+      <div class="sh-title" style="color:var(--cyan)">⚡ PhET SIM 1 — GRAVITATSIYA VA ORBITALAR</div>
+      <div class="sh-sub">Umumiy nisbiylik • Tortishish kuchi va orbital harakat</div>
+    </div>
+  </div>
+  <div class="phet-layout">
+    <div class="phet-sidebar">
+      <div class="info-blk">
+        <h4>Nima o'rganamiz?</h4>
+        <ul>
+          <li>Quyosh, Yer, Oy orbitasi</li>
+          <li>F = GMm/r² formulasi amalda</li>
+          <li>Massa va orbitaning bog'liqligi</li>
+          <li>Eynshteyn: bu kuch emas — fazovaqt egriligi!</li>
+        </ul>
+      </div>
+      <div class="info-blk gold-blk">
+        <h4>Formula</h4>
+        <div class="fpill">F = GMm/r²</div>
+        <p style="margin-top:8px;font-size:11px">Nyuton: gravitatsion kuch<br>
+        Eynshteyn: fazovaqt egriligi!</p>
+      </div>
+      <div class="info-blk">
+        <h4>Kuzating</h4>
+        <ul>
+          <li>Massani oshiring</li>
+          <li>Tezlikni o'zgartiring</li>
+          <li>Og'irlikni o'chiring</li>
+        </ul>
+      </div>
+    </div>
+    <div class="phet-frame">
+      <div class="phet-loading" id="pl1">
+        <div class="phet-spinner"></div>
+        <p>Simulyator yuklanmoqda...</p>
+      </div>
+      <iframe
+        src="https://phet.colorado.edu/sims/html/gravity-and-orbits/latest/gravity-and-orbits_en.html"
+        allowfullscreen
+        allow="fullscreen"
+        onload="document.getElementById('pl1').classList.add('gone')">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 18 — PhET SIM 2: Nuclear Fission -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s17">
+  <div class="sh" style="border-bottom-color:rgba(244,196,48,.35)">
+    <div class="sh-num gold">S2</div>
+    <div>
+      <div class="sh-title" style="color:var(--gold)">⚡ PhET SIM 2 — YADROVIY PARCHALANISH</div>
+      <div class="sh-sub">E = mc² amalda • Uran parchalanishida massa energiyaga aylanadi</div>
+    </div>
+  </div>
+  <div class="phet-layout">
+    <div class="phet-sidebar gold-side">
+      <div class="info-blk gold-blk">
+        <h4>Nima o'rganamiz?</h4>
+        <ul>
+          <li>Uran yadrosiga neytron urilishi</li>
+          <li>Massa kamayib energiya ajralishi</li>
+          <li>Zanjirli reaktsiya</li>
+          <li>Atom bombasi va reaktor asosi</li>
+        </ul>
+      </div>
+      <div class="info-blk gold-blk">
+        <h4>Formula</h4>
+        <div class="fpill">E = mc²</div>
+        <p style="margin-top:8px;font-size:11px">1g U-235 → 82 TJ energiya<br>
+        20 kilotonnalik bomba!</p>
+      </div>
+      <div class="info-blk gold-blk">
+        <h4>Kuzating</h4>
+        <ul>
+          <li>Neytron otib ko'ring</li>
+          <li>Zanjirli reaktsiya boshlang</li>
+          <li>Ajralgan energiyani kuzating</li>
+        </ul>
+      </div>
+    </div>
+    <div class="phet-frame">
+      <div class="phet-loading" id="pl2">
+        <div class="phet-spinner gold-spin"></div>
+        <p>Simulyator yuklanmoqda...</p>
+      </div>
+      <iframe
+        src="https://phet.colorado.edu/sims/html/nuclear-fission/latest/nuclear-fission_en.html"
+        allowfullscreen
+        allow="fullscreen"
+        onload="document.getElementById('pl2').classList.add('gone')">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 19 — PhET SIM 3: My Solar System -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s18">
+  <div class="sh" style="border-bottom-color:rgba(0,200,83,.35)">
+    <div class="sh-num green">S3</div>
+    <div>
+      <div class="sh-title" style="color:var(--green)">⚡ PhET SIM 3 — QUYOSH TIZIMI MODELI</div>
+      <div class="sh-sub">Orbital mexanika • Keplerdan Eynshteyngacha</div>
+    </div>
+  </div>
+  <div class="phet-layout">
+    <div class="phet-sidebar green-side">
+      <div class="info-blk green-blk">
+        <h4>Nima o'rganamiz?</h4>
+        <ul>
+          <li>Ikki yulduzli sistemalar</li>
+          <li>Massa va orbital tezlik</li>
+          <li>Orbit traektoriyasi</li>
+          <li>Keplerni III qonuni</li>
+        </ul>
+      </div>
+      <div class="info-blk green-blk">
+        <h4>Formulalar</h4>
+        <div class="fpill" style="border-color:var(--green);color:var(--green);background:rgba(0,200,83,.1)">v = √(GM/r)</div>
+        <div class="fpill" style="border-color:var(--green);color:var(--green);background:rgba(0,200,83,.1);margin-top:6px;font-size:13px">T² ∝ a³</div>
+        <p style="margin-top:8px;font-size:11px">Keplerning III qonuni</p>
+      </div>
+      <div class="info-blk green-blk">
+        <h4>Kuzating</h4>
+        <ul>
+          <li>Yulduz massasini o'zgartiring</li>
+          <li>Ikkinchi yulduz qo'shing</li>
+          <li>Orbit qanday o'zgaradi?</li>
+        </ul>
+      </div>
+    </div>
+    <div class="phet-frame">
+      <div class="phet-loading" id="pl3">
+        <div class="phet-spinner green-spin"></div>
+        <p>Simulyator yuklanmoqda...</p>
+      </div>
+      <iframe
+        src="https://phet.colorado.edu/sims/html/my-solar-system/latest/my-solar-system_en.html"
+        allowfullscreen
+        allow="fullscreen"
+        onload="document.getElementById('pl3').classList.add('gone')">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- SLIDE 20 — Xulosa -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="slide dark" id="s19">
+  <div style="flex:1;display:flex;flex-direction:column;padding:18px 28px 12px;gap:10px;position:relative;z-index:2">
+    <div style="font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;
+      color:var(--white);text-align:center">XULOSA VA ADABIYOTLAR</div>
+    <div class="cyan-bar"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+      <script>
+        [
+          "Nisbiylik nazariyasi vaqt, masofa va massa — mutlaq emas, kuzatuvchiga bog'liq nisbiy kattaliklar ekanini isbotladi",
+          "Maxsus nisbiylik (1905): 2 postulat orqali vaqt kengayishi, uzunlik qisqarishi va E=mc² kashf etildi",
+          "Umumiy nisbiylik (1915): tortishish — kuch emas, fazovaqt egriligining natijasi",
+          "GPS, yadro reaktorlari, tibbiy PET skaneri — hammasi nisbiylikka asoslanadi",
+          "Nazariya 100+ yil davomida o'tkazilgan barcha tajriba va kuzatishlarda to'liq tasdiqlangan",
+        ].forEach((c,i)=>{
+          const col=i%2===0?'var(--cyan)':'var(--gold)';
+          document.write(`
+            <div style="display:flex;align-items:stretch;background:var(--dblue);
+              border-radius:4px;overflow:hidden">
+              <div style="width:32px;flex-shrink:0;background:${col};
+                display:flex;align-items:center;justify-content:center;
+                font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:var(--navy)">${i+1}</div>
+              <div style="padding:9px 14px;font-size:13px;color:var(--light);line-height:1.55">${c}</div>
+            </div>`);
+        });
+      </script>
+    </div>
+    <div style="background:rgba(13,27,42,.55);border:1px solid rgba(144,164,174,.2);
+      border-radius:8px;padding:12px 18px">
+      <div style="font-size:10px;font-weight:700;color:var(--cyan);text-transform:uppercase;
+        letter-spacing:1.5px;margin-bottom:8px">FOYDALANILGAN ADABIYOTLAR</div>
+      <div style="font-size:11.5px;color:var(--gray);line-height:1.8">
+        1. K.P.Abduraxmanov, O'.Egamov. <em>"Fizika"</em> Darslik. Toshkent, 2013.<br>
+        2. А. Эйнштейн. <em>"О специальной и общей теории относительности."</em> М.: Наука, 1983.<br>
+        3. С.Э.Фриш, А.В.Тиморева. Умумий физика курси, 2-том. Москва, 1985.<br>
+        4. И.В.Савельев. Физика курси. М.: Наука, 1989. 1–2-томлар.<br>
+        5. <span style="color:var(--cyan)">phet.colorado.edu</span> ·
+           <span style="color:var(--cyan)">physics.nist.gov</span> ·
+           <span style="color:var(--cyan)">einstein-online.info</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /slides -->
+
+<!-- Bottom bar -->
+<div id="botbar">
+  <button class="nbtn" id="btn-prev" onclick="navigate(-1)" disabled>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+    Oldingi
+  </button>
+  <div class="dots" id="dots-wrap"></div>
+  <button class="nbtn" id="btn-next" onclick="navigate(1)">
+    Keyingi
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+  </button>
+</div>
+</div><!-- /app -->
+
+<div style="position:fixed;bottom:58px;right:16px;font-size:10.5px;color:rgba(144,164,174,.7);
+  pointer-events:none;z-index:100">
+  <kbd style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+    border-radius:3px;padding:2px 5px;font-family:monospace">←</kbd>
+  <kbd style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+    border-radius:3px;padding:2px 5px;font-family:monospace">→</kbd> klaviatura
+</div>
+
+<script>
+const TOTAL = 20;
+const PHET_SLIDES = [16, 17, 18]; // 0-indexed
+let cur = 0;
+
+// Build dots
+const dotsEl = document.getElementById('dots-wrap');
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (PHET_SLIDES.includes(i) ? ' phet' : '') + (i === 0 ? ' active' : '');
+  d.title = `Slayd ${i+1}`;
+  d.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(d);
+}
+
+const allDots  = () => dotsEl.querySelectorAll('.dot');
+const allSlides = () => document.querySelectorAll('.slide');
+
+function goTo(idx) {
+  if (idx < 0 || idx >= TOTAL || idx === cur) return;
+  const slides = allSlides();
+  const dots   = allDots();
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev = cur;
+  setTimeout(() => slides[prev].classList.remove('exit'), 420);
+  dots[cur].classList.remove('active');
+  cur = idx;
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('active');
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === TOTAL - 1;
+  document.getElementById('counter').textContent = `${cur + 1} / ${TOTAL}`;
+}
+
+function navigate(dir) { goTo(cur + dir); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigate(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   navigate(-1);
+  if (e.key === 'Home') goTo(0);
+  if (e.key === 'End')  goTo(TOTAL - 1);
+});
+</script>
+</body>
+</html>
